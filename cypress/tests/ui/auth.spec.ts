@@ -30,6 +30,22 @@ describe("User Sign-up and Login", function () {
     cy.location("pathname").should("equal", "/");
   });
 
+  it("should be in ERROR", function () {
+    // Manual login to add a wait (for the video)
+    cy.visit("/signin");
+
+    cy.intercept("POST", "/login").as("loginUser");
+    cy.intercept("GET", "checkAuth").as("getUserProfile");
+
+    cy.getBySel("signin-username").type("WRONG_LOGIN");
+    cy.getBySel("signin-password").type("WRONG_PASSWORD");
+
+    cy.wait(1500);
+
+    cy.getBySel("signin-submit").click();
+    cy.location("pathname").should("equal", "/");
+  });
+
   it("should remember a user for 30 days after login", function () {
     cy.database("find", "users").then((user: User) => {
       cy.login(user.username, "s3cret", { rememberUser: true });

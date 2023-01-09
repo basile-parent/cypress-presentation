@@ -7,6 +7,9 @@ import { percyHealthCheck } from "@percy/cypress/task";
 import codeCoverageTask from "@cypress/code-coverage/task";
 import { defineConfig } from "cypress";
 import "@cypress/instrument-cra";
+import createBundler from "@bahmutov/cypress-esbuild-preprocessor";
+import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
+import createEsbuildPlugin from "@badeball/cypress-cucumber-preprocessor/esbuild";
 
 dotenv.config({ path: ".env.local" });
 dotenv.config();
@@ -14,7 +17,7 @@ dotenv.config();
 const awsConfig = require(path.join(__dirname, "./aws-exports-es5.js"));
 
 module.exports = defineConfig({
-  projectId: "7s5okt",
+  projectId: "tfiugp",
   env: {
     apiUrl: "http://localhost:3001",
     mobileViewportWidthBreakpoint: 414,
@@ -64,11 +67,11 @@ module.exports = defineConfig({
   },
   e2e: {
     baseUrl: "http://localhost:3000",
-    specPattern: "cypress/tests/**/*.spec.{js,jsx,ts,tsx}",
+    specPattern: "cypress/tests/**/*.{spec.{js,jsx,ts,tsx},feature}",
     supportFile: "cypress/support/e2e.ts",
     viewportHeight: 1000,
     viewportWidth: 1280,
-    setupNodeEvents(on, config) {
+    async setupNodeEvents(on, config) {
       const testDataApiEndpoint = `${config.env.apiUrl}/testData`;
 
       const queryDatabase = ({ entity, query }, callback) => {
@@ -96,6 +99,16 @@ module.exports = defineConfig({
           return queryDatabase(queryPayload, (data, attrs) => _.find(data.results, attrs));
         },
       });
+
+      // // This is required for the preprocessor to be able to generate JSON reports after each run, and more,
+      // await addCucumberPreprocessorPlugin(on, config);
+      //
+      // on(
+      //   "file:preprocessor",
+      //   createBundler({
+      //     plugins: [createEsbuildPlugin(config)],
+      //   })
+      // );
 
       codeCoverageTask(on, config);
       return config;

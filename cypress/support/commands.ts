@@ -41,47 +41,47 @@ Cypress.Commands.add("getBySelLike", (selector, ...args) => {
 
 Cypress.Commands.add("login", (username, password, { rememberUser = false } = {}) => {
   const signinPath = "/signin";
-  const log = Cypress.log({
-    name: "login",
-    displayName: "LOGIN",
-    message: [`🔐 Authenticating | ${username}`],
-    // @ts-ignore
-    autoEnd: false,
-  });
-
-  cy.intercept("POST", "/login").as("loginUser");
-  cy.intercept("GET", "checkAuth").as("getUserProfile");
-
-  cy.location("pathname", { log: false }).then((currentPath) => {
-    if (currentPath !== signinPath) {
-      cy.visit(signinPath);
-    }
-  });
-
-  log.snapshot("before");
-
-  cy.getBySel("signin-username").type(username);
-  cy.getBySel("signin-password").type(password);
-
-  if (rememberUser) {
-    cy.getBySel("signin-remember-me").find("input").check();
-  }
-
-  cy.getBySel("signin-submit").click();
-  cy.wait("@loginUser").then((loginUser: any) => {
-    log.set({
-      consoleProps() {
-        return {
-          username,
-          password,
-          rememberUser,
-          userId: loginUser.response.statusCode !== 401 && loginUser.response.body.user.id,
-        };
-      },
+    const log = Cypress.log({
+      name: "login",
+      displayName: "LOGIN",
+      message: [`🔐 Authenticating | ${username}`],
+      // @ts-ignore
+      autoEnd: false,
     });
 
-    log.snapshot("after");
-    log.end();
+    cy.intercept("POST", "/login").as("loginUser");
+    cy.intercept("GET", "checkAuth").as("getUserProfile");
+
+    cy.location("pathname", { log: false }).then((currentPath) => {
+      if (currentPath !== signinPath) {
+        cy.visit(signinPath);
+      }
+    });
+
+    log.snapshot("before");
+
+    cy.getBySel("signin-username").type(username);
+    cy.getBySel("signin-password").type(password);
+
+    if (rememberUser) {
+      cy.getBySel("signin-remember-me").find("input").check();
+    }
+
+    cy.getBySel("signin-submit").click();
+    cy.wait("@loginUser").then((loginUser: any) => {
+      log.set({
+        consoleProps() {
+          return {
+            username,
+            password,
+            rememberUser,
+            userId: loginUser.response.statusCode !== 401 && loginUser.response.body.user.id,
+          };
+        },
+      });
+
+      log.snapshot("after");
+      log.end();
   });
 });
 

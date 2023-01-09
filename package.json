@@ -49,6 +49,8 @@
     "yup": "0.32.11"
   },
   "devDependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^15.0.0",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.1.5",
     "@cypress/code-coverage": "^3.10.0-dev.1",
     "@cypress/instrument-cra": "1.4.0",
     "@cypress/webpack-dev-server": "^1.6.0",
@@ -93,6 +95,7 @@
     "cross-env": "7.0.3",
     "cypress": "^12.0.2",
     "dotenv": "16.0.0",
+    "esbuild": "^0.16.12",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-cypress": "2.12.1",
     "eslint-plugin-prettier": "4.0.0",
@@ -123,6 +126,7 @@
     "typescript": "4.6.3"
   },
   "resolutions": {
+    "react": "18.2.0",
     "@babel/compat-data": "7.9.0",
     "@types/express": "4.17.2",
     "@types/express-serve-static-core": "4.17.2"
@@ -146,10 +150,10 @@
     "lint": "eslint && prettier --check \"**/**.{ts,js,tsx}\" \"*.{json,md,yml}\"",
     "list:dev:users": "cat data/database.json | json -a users | json -a id username",
     "types": "tsc --noEmit",
-    "precypress:open": "yarn predev:cognito:ci",
-    "cypress:open": "cypress open",
+    "cypress:open": "set DEBUG=cypress:electron,cypress-configuration,cypress-cucumber-preprocessor && cypress open",
     "cypress:open:mobile": "cypress open --config viewportWidth=375,viewportHeight=667",
-    "cypress:run": "cypress run",
+    "cypress:run": "cypress run --record --key b49677d5-9f1b-401c-beff-d92f892f041b",
+    "cypress:run:one": "cypress run --spec cypress/tests/ui/auth.spec.ts --browser chrome --record --key b49677d5-9f1b-401c-beff-d92f892f041b",
     "cypress:run:component": "cypress run --component",
     "cypress:run:mobile": "cypress run --config viewportWidth=375,viewportHeight=667",
     "test": "yarn cypress:open",
